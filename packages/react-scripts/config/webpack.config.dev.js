@@ -134,13 +134,7 @@ module.exports = {
           {
             options: {
               formatter: eslintFormatter,
-              // @remove-on-eject-begin
-              baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
-              },
-              ignore: false,
-              useEslintrc: false,
-              // @remove-on-eject-end
+              useEslintrc: true,
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -211,6 +205,7 @@ module.exports = {
           {
             loader: require.resolve('css-loader'),
             options: {
+              modules: true,
               importLoaders: 1,
             },
           },
