@@ -5,12 +5,12 @@ import css from './App.css';
 class App extends Component {
   render() {
     return (
-      <div className={css['App']}>
-        <div className={csss['App-header']}>
-          <img src={logo} className={css['App-logo']} alt="logo" />
+      <div className={css.app}>
+        <div className={css.header}>
+          <img src={logo} className={css.logo} alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <p className={css['App-intro']}>
+        <p className={css.intro}>
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
       </div>
