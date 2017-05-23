@@ -35,6 +35,14 @@ create-amido-app my-app
 Woo!
 
 
+## Releasing
+
+From the `packages/react-scripts` folder
+* `npm version [major|minor|patch]`
+* commit and push
+* `npm publish`
+
+
 ## Help
 
 Check out the [original README.md](https://github.com/facebookincubator/create-react-app/blob/master/README.md) for Getting Started, User Guide, and a whole lot of other documentation around `create-react-app`.
