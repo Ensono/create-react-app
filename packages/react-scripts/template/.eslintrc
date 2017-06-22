@@ -6,6 +6,12 @@
   "rules": {
     "react/jsx-filename-extension": 0,
     "react/prefer-stateless-function": 1,
-    "linebreak-style": 0
+    "linebreak-style": 0,
+    "import/no-unresolved": 0 // TODO: Remove when the root import resolver is fixed
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-root-import": {}
+    }
   }
 }

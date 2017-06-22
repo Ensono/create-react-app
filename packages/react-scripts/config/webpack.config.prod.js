@@ -182,6 +182,14 @@ module.exports = {
         options: {
           babelrc: false,
           presets: [require.resolve('babel-preset-react-app')],
+          plugins: [
+            [
+              require.resolve('babel-plugin-root-import'),
+              {
+                rootPathSuffix: 'src',
+              },
+            ],
+          ],
         },
         // @remove-on-eject-end
       },
