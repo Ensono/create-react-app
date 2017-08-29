@@ -47,6 +47,7 @@ const semver = require('semver');
 const dns = require('dns');
 const tmp = require('tmp');
 const unpack = require('tar-pack').unpack;
+const url = require('url');
 const hyperquest = require('hyperquest');
 
 const packageJson = require('./package.json');
@@ -74,10 +75,14 @@ const program = new commander.Command(packageJson.name)
     );
     console.log(`      - a specific npm version: ${chalk.green('0.8.2')}`);
     console.log(
-      `      - a custom fork published on npm: ${chalk.green('my-react-scripts')}`
+      `      - a custom fork published on npm: ${chalk.green(
+        'my-react-scripts'
+      )}`
     );
     console.log(
-      `      - a .tgz archive: ${chalk.green('https://mysite.com/my-react-scripts-0.8.2.tgz')}`
+      `      - a .tgz archive: ${chalk.green(
+        'https://mysite.com/my-react-scripts-0.8.2.tgz'
+      )}`
     );
     console.log(
       `    It is not needed unless you specifically want to use a fork.`
@@ -87,7 +92,9 @@ const program = new commander.Command(packageJson.name)
       `    If you have any problems, do not hesitate to file an issue:`
     );
     console.log(
-      `      ${chalk.cyan('https://github.com/facebookincubator/create-react-app/issues/new')}`
+      `      ${chalk.cyan(
+        'https://github.com/facebookincubator/create-react-app/issues/new'
+      )}`
     );
     console.log();
   })
@@ -254,15 +261,19 @@ function run(
 
   console.log('Installing packages. This might take a couple of minutes.');
   getPackageName(packageToInstall)
-    .then(packageName => checkIfOnline(useYarn).then(isOnline => ({
-      isOnline: isOnline,
-      packageName: packageName,
-    })))
+    .then(packageName =>
+      checkIfOnline(useYarn).then(isOnline => ({
+        isOnline: isOnline,
+        packageName: packageName,
+      }))
+    )
     .then(info => {
       const isOnline = info.isOnline;
       const packageName = info.packageName;
       console.log(
-        `Installing ${chalk.cyan('react')}, ${chalk.cyan('react-dom')}, and ${chalk.cyan(packageName)}...`
+        `Installing ${chalk.cyan('react')}, ${chalk.cyan(
+          'react-dom'
+        )}, and ${chalk.cyan(packageName)}...`
       );
       console.log();
 
@@ -330,7 +341,9 @@ function run(
       if (!remainingFiles.length) {
         // Delete target folder if empty
         console.log(
-          `Deleting ${chalk.cyan(`${appName} /`)} from ${chalk.cyan(path.resolve(root, '..'))}`
+          `Deleting ${chalk.cyan(`${appName} /`)} from ${chalk.cyan(
+            path.resolve(root, '..')
+          )}`
         );
         process.chdir(path.resolve(root, '..'));
         fs.removeSync(path.join(root));
@@ -418,7 +431,9 @@ function getPackageName(installPackage) {
           /^.+\/(.+?)(?:-\d+.+)?\.tgz$/
         )[1];
         console.log(
-          `Based on the filename, assuming it is "${chalk.cyan(assumedProjectName)}"`
+          `Based on the filename, assuming it is "${chalk.cyan(
+            assumedProjectName
+          )}"`
         );
         return Promise.resolve(assumedProjectName);
       });
@@ -426,7 +441,7 @@ function getPackageName(installPackage) {
     // Pull package name out of git urls e.g:
     // git+https://github.com/mycompany/react-scripts.git
     // git+ssh://github.com/mycompany/react-scripts.git#v1.2.3
-    return Promise.resolve(installPackage.match(/([^\/]+)\.git(#.*)?$/)[1]);
+    return Promise.resolve(installPackage.match(/([^/]+)\.git(#.*)?$/)[1]);
   } else if (installPackage.match(/.+@/)) {
     // Do not match @scope/ when stripping off @version or @tag
     return Promise.resolve(
@@ -481,7 +496,9 @@ function checkAppName(appName) {
   const validationResult = validateProjectName(appName);
   if (!validationResult.validForNewPackages) {
     console.error(
-      `Could not create a project called ${chalk.red(`"${appName}"`)} because of npm naming restrictions:`
+      `Could not create a project called ${chalk.red(
+        `"${appName}"`
+      )} because of npm naming restrictions:`
     );
     printValidationResults(validationResult.errors);
     printValidationResults(validationResult.warnings);
@@ -493,7 +510,9 @@ function checkAppName(appName) {
   if (dependencies.indexOf(appName) >= 0) {
     console.error(
       chalk.red(
-        `We cannot create a project called ${chalk.green(appName)} because a dependency with the same name exists.\n` +
+        `We cannot create a project called ${chalk.green(
+          appName
+        )} because a dependency with the same name exists.\n` +
           `Due to the way npm works, the following names are not allowed:\n\n`
       ) +
         chalk.cyan(dependencies.map(depName => `  ${depName}`).join('\n')) +
@@ -515,7 +534,9 @@ function makeCaretRange(dependencies, name) {
 
   if (!semver.validRange(patchedVersion)) {
     console.error(
-      `Unable to patch ${name} dependency version because version ${chalk.red(version)} will become invalid ${chalk.red(patchedVersion)}`
+      `Unable to patch ${name} dependency version because version ${chalk.red(
+        version
+      )} will become invalid ${chalk.red(patchedVersion)}`
     );
     patchedVersion = version;
   }
@@ -594,7 +615,15 @@ function checkIfOnline(useYarn) {
 
   return new Promise(resolve => {
     dns.lookup('registry.yarnpkg.com', err => {
-      resolve(err === null);
+      if (err != null && process.env.https_proxy) {
+        // If a proxy is defined, we likely can't resolve external hostnames.
+        // Try to resolve the proxy name as an indication of a connection.
+        dns.lookup(url.parse(process.env.https_proxy).hostname, proxyErr => {
+          resolve(proxyErr == null);
+        });
+      } else {
+        resolve(err == null);
+      }
     });
   });
 }
