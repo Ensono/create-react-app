@@ -1,21 +1,38 @@
-import React, { Component } from 'react';
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
 import logo from './logo.svg';
-import css from './App.css';
 
-class App extends Component {
-  render() {
-    return (
-      <div className={css.app}>
-        <div className={css.header}>
-          <img src={logo} className={css.logo} alt="logo" />
-          <h1 className={css.title}>Welcome to React</h1>
-        </div>
-        <p className={css.intro}>
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
+const Container = styled.div`text-align: center;`;
+
+const Header = styled.div`
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+`;
+
+const Title = styled.h1`font-size: 1.5em;`;
+
+const SpinImage = styled.img`
+  animation: ${keyframes`
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  `} infinite 20s linear;
+  height: 80px;
+`;
+
+const Intro = styled.p`font-size: large;`;
+
+const App = () => (
+  <Container>
+    <Header>
+      <SpinImage src={logo} alt="logo" />
+      <Title>Welcome to React</Title>
+    </Header>
+    <Intro>
+      To get started, edit <code>src/App.js</code> and save to reload.
+    </Intro>
+  </Container>
+);
 
 export default App;
