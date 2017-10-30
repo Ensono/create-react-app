@@ -99,6 +99,7 @@ module.exports = function(
     command = 'npm';
     args = ['install', '--save', verbose && '--verbose'].filter(e => e);
   }
+  const baseArgs = args.slice();
   args.push('react', 'react-dom');
 
   // Install additional template dependencies, if present
@@ -108,11 +109,24 @@ module.exports = function(
   );
   if (fs.existsSync(templateDependenciesPath)) {
     const templateDependencies = require(templateDependenciesPath).dependencies;
-    args = args.concat(
+    const extraDependenciesArgs = baseArgs.concat(
       Object.keys(templateDependencies).map(key => {
         return `${key}@${templateDependencies[key]}`;
       })
     );
+
+    if (extraDependenciesArgs.length > baseArgs.length) {
+      // TODO: hopefully fix this nicely upstream
+      // https://github.com/facebookincubator/create-react-app/issues/3349
+      console.log(`Installing template dependencies using ${command}...`);
+      const proc = spawn.sync(command, extraDependenciesArgs, {
+        stdio: 'inherit',
+      });
+      if (proc.status !== 0) {
+        console.error(`\`${command} ${args.join(' ')}\` failed`);
+        return;
+      }
+    }
     fs.unlinkSync(templateDependenciesPath);
   }
 
