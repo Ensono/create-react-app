@@ -7,7 +7,7 @@ Fork of `create-react-app` with customized `react-scripts`.
 
 Compared to the original `react-scripts`, we include the following changes:
 
-* Enable CSS Modules
+* Add styled components
 * Include extended `.eslintrc` (primarily adds [`eslint-config-airbnb`](https://www.npmjs.com/package/eslint-config-airbnb))
 * Include `.editorconfig`
 
